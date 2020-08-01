@@ -119,7 +119,4 @@ server.on('upgrade', function upgrade(request, socket, head) {
     
 });
 
-
-server.on('')
-
 server.listen(config.server.port);
