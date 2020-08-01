@@ -11,9 +11,8 @@ const utils = require('./utils');
 const app = express();
 
 app.get('/', async (req, res, next) => {
-    res.send('Hello world!');
-    res.send('Hello world!');
-    res.send('Hello world!');
+    const buffer = Buffer.allocUnsafe(10 * 1024);
+    res.send(buffer);
 });
 
 const server = https.createServer(utils.keys, app);
