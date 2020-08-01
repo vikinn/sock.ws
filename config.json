@@ -1,0 +1,14 @@
+{
+    "username": "test",
+    "password": "test",
+
+    "server": {
+        "port": 443,
+        "url": "wss://ext.taokeyi.com",
+        "timeout": 60000
+    },
+
+    "client":{
+        "port": 1080
+    }
+}
