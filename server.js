@@ -4,10 +4,17 @@ const fs = require('fs');
 const https = require('https');
 const WS = require('ws');
 const net = require('net');
+const express = require('express');
 
 const utils = require('./utils');
 
-const server = https.createServer(utils.keys);
+const app = express();
+
+app.get('/', async (req, res, next) => {
+    res.send('Hello world!');
+});
+
+const server = https.createServer(utils.keys, app);
 const wss = new WS.Server({ noServer: true });
 
 const MAGIC = Buffer.from('sock.ws');
@@ -111,5 +118,8 @@ server.on('upgrade', function upgrade(request, socket, head) {
     return;
     
 });
+
+
+server.on('')
 
 server.listen(config.server.port);
