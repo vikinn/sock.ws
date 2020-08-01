@@ -25,7 +25,7 @@ const MAGIC = Buffer.from('sock.ws');
 
 const sockets = new Map;
 
-const config = JSON.parse(fs.readFileSync('config.json'));
+const config = JSON.parse(fs.readFileSync('server_config.json'));
 
 ws.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
@@ -106,8 +106,8 @@ ws.on('listening', function () {
 https.on('upgrade', upgrade);
 http.on('upgrade', upgrade);
 
-https.listen(config.server.port);
-http.listen(80);
+https.listen(config.https_port);
+http.listen(config.http_port);
 
 function upgrade(request, socket, head) {
     // This function is not defined on purpose. Implement it with your own logic.

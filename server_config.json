@@ -1,0 +1,9 @@
+{
+    "username": "test",
+    "password": "test",
+
+    
+    "https_port": 443,
+    "http_port": 80,
+    "timeout": 60000
+}

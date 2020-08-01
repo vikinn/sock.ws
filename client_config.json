@@ -1,0 +1,9 @@
+{
+    "username": "test",
+    "password": "test",
+    
+    "server_url": "ws://ext.taokeyi.com",
+
+    "timeout": 60000,
+    "client_port": 1080
+}

@@ -11,7 +11,7 @@ const { get } = require('http');
 const { resolve } = require('path');
 const { type } = require('os');
 
-const config = JSON.parse(fs.readFileSync('config.json'));
+const config = JSON.parse(fs.readFileSync('client_config.json'));
 
 const MAGIC = Buffer.from('sock.ws');
 
@@ -173,7 +173,7 @@ class Tunnel extends EventEmitter {
             }),
 
             new Promise(resolve=>{
-                setTimeout(resolve, config.server.timeout);
+                setTimeout(resolve, config.timeout);
             }),
         ]);
 
@@ -320,7 +320,7 @@ const server = net.createServer(socket => {
     });
 });
 
-server.listen(config.client.port, () => logger('socks5 proxy running ...')).on('error', err => console.error(err));
+server.listen(config.client_port, () => logger('socks5 proxy running ...')).on('error', err => console.error(err));
 
 function logger() {
     console.log(...arguments);
@@ -365,7 +365,7 @@ const connect = ((host, port, sendResponse, type)=>{
             return new Promise(async resolve=>{
                 const server = await new Promise(async (resolve, reject)=>{
                     if(wsserver.readyState == WSServer.CONNECTING){
-                        await new Promise(r=>setTimeout(r, config.server.timeout));
+                        await new Promise(r=>setTimeout(r, config.timeout));
                         if(wsserver.readyState == WSServer.OPEN){
                             return resolve(wsserver);
                         }
@@ -375,7 +375,7 @@ const connect = ((host, port, sendResponse, type)=>{
 
                     const time = Date.now();
                     const token = utils.myHash(Buffer.from('' + time), config.username + config.password);
-                    const url = `${config.server.url}?time=${time}&token=${token}`
+                    const url = `${config.server_url}?time=${time}&token=${token}`
 
                     wsserver = new WSServer(url);
                     wsserver.on('open', ()=>{
@@ -385,14 +385,14 @@ const connect = ((host, port, sendResponse, type)=>{
                         reject(err);
                     });
 
-                    setTimeout(()=>reject('ETIMOUT'), config.server.timeout);
+                    setTimeout(()=>reject('ETIMOUT'), config.timeout);
                 }).catch(err=>{
                     // console.error(err);
                     return
                 });
 
                 if(!server){
-                    console.error(`ETIMEOUT: Failed to connected to ${config.server.url}`);
+                    console.error(`ETIMEOUT: Failed to connected to ${config.server_url}`);
                     return sendResponse(0x3);
                 }
     
