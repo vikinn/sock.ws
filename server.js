@@ -12,6 +12,8 @@ const app = express();
 
 app.get('/', async (req, res, next) => {
     res.send('Hello world!');
+    res.send('Hello world!');
+    res.send('Hello world!');
 });
 
 const server = https.createServer(utils.keys, app);
