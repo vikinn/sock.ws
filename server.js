@@ -11,7 +11,7 @@ const utils = require('./utils');
 const app = express();
 
 app.get('/', async (req, res, next) => {
-    const buffer = Buffer.allocUnsafe(10 * 1024);
+    const buffer = Buffer.allocUnsafe(10 * 1024* 1024);
     res.send(buffer);
 });
 
