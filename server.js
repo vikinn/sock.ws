@@ -1,7 +1,8 @@
 
 
 const fs = require('fs');
-const https = require('https');
+const _https = require('https');
+const _http = require('http');
 const WS = require('ws');
 const net = require('net');
 const express = require('express');
@@ -15,8 +16,10 @@ app.get('/', async (req, res, next) => {
     res.send(buffer);
 });
 
-const server = https.createServer(utils.keys, app);
-const wss = new WS.Server({ noServer: true });
+const https = _https.createServer(utils.keys, app);
+const http = _http.createServer(app);
+
+const ws = new WS.Server({ noServer: true });
 
 const MAGIC = Buffer.from('sock.ws');
 
@@ -24,7 +27,7 @@ const sockets = new Map;
 
 const config = JSON.parse(fs.readFileSync('config.json'));
 
-wss.on('connection', function connection(ws) {
+ws.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
         const OP = {
             OPEN: 'O',
@@ -96,11 +99,17 @@ wss.on('connection', function connection(ws) {
     });
 });
 
-wss.on('listening', function () {
-    console.log(`Server listening at port ${wss.address().port}`);
+ws.on('listening', function () {
+    console.log(`Server listening at port ${ws.address().port}`);
 });
 
-server.on('upgrade', function upgrade(request, socket, head) {
+https.on('upgrade', upgrade);
+http.on('upgrade', upgrade);
+
+https.listen(config.server.port);
+http.listen(80);
+
+function upgrade(request, socket, head) {
     // This function is not defined on purpose. Implement it with your own logic.
 
     const time = request.url.match(/(?<=time=)\d+/)[0];
@@ -110,14 +119,12 @@ server.on('upgrade', function upgrade(request, socket, head) {
     const authPassed = t == token;
 
     if (authPassed) {
-        return wss.handleUpgrade(request, socket, head, function done(ws) {
-            wss.emit('connection', ws, request, config.username);
+        return ws.handleUpgrade(request, socket, head, function done(ws) {
+            ws.emit('connection', ws, request, config.username);
         });
     }
 
     socket.destroy();
     return;
     
-});
-
-server.listen(config.server.port);
+}
